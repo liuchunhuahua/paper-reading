@@ -1,3 +1,7 @@
+'''
+forked from https://github.com/baidu-research/GloballyNormalizedReader/blob/master/ops.py
+'''
+
 import tensorflow as tf
 import tensorflow.contrib.cudnn_rnn as cudnn_rnn
 from itertools import zip_longest
