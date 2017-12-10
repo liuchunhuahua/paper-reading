@@ -25,12 +25,13 @@ def m_cudnn_lstm(inputs, num_layers, hidden_size, is_training, weight_noise_std=
     return outputs, output_h, output_c
 
 
-def cudnn_lstm(inputs, num_layers, hidden_size, is_training, weight_noise_std=None,scope=None):
+def cudnn_lstm(inputs, num_layers, hidden_size, is_training, direction='bidirectional',scope=None):
     """Run the CuDNN LSTM.
     Arguments:
         - inputs:   A tensor of shape [batch, length, input_size] of inputs.
         - layers:   Number of RNN layers.
-        - hidden_size:     Number of units in each layer.
+        - hidden_size:  Number of units in each layer.
+        - direction: indicate 'bidirectional' or 'unidirectional'     
         - is_training:     tf.bool indicating whether training mode is enabled.
     Return a tuple of (outputs, init_state, final_state).
     """
@@ -44,29 +45,25 @@ def cudnn_lstm(inputs, num_layers, hidden_size, is_training, weight_noise_std=No
 
     cudnn_cell = tf.contrib.cudnn_rnn.CudnnLSTM(
         num_layers, hidden_size, input_size,
-        input_mode="linear_input", direction="bidirectional")
+        input_mode="linear_input", direction=direction)
 
     est_size = estimate_cudnn_parameter_size(
         num_layers=num_layers,
         hidden_size=hidden_size,
         input_size=input_size,
         input_mode="linear_input",
-        direction="bidirectional")
+        direction=direction)
 
     cudnn_params = tf.get_variable(
         "RNNParams",
         shape=[est_size],
         initializer=tf.contrib.layers.variance_scaling_initializer())
 
-    if weight_noise_std is not None:
-        cudnn_params = weight_noise(
-            cudnn_params,
-            stddev=weight_noise_std,
-            is_training=is_training)
+    num_dir = direction_to_num_directions(direction)
     # initial_state: a tuple of tensor(s) of shape`[num_layers * num_dirs, batch_size, num_units]
     init_state = tf.tile(
-        tf.zeros([2 * num_layers, 1, hidden_size], dtype=tf.float32),
-        [1, tf.shape(inputs)[1], 1])  # [2 * num_layers, batch_size, hidden_size]
+        tf.zeros([num_dir * num_layers, 1, hidden_size], dtype=tf.float32),
+        [1, tf.shape(inputs)[1], 1])  # [num_dir * num_layers, batch_size, hidden_size]
     '''
     Args:
       inputs: `3-D` tensor with shape `[time_len, batch_size, input_size]`.
