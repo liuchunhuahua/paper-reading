@@ -1,6 +1,6 @@
 # date: 20171228
 # function: comprare tf.matmul and tf.reduce_sum(tf.multiply()) to realize attention
-
+# conclusion: tf.matmul is obviously simpler to realize and easer to understand!
 import tensorflow as tf
 import sys
 import numpy as np
