@@ -34,3 +34,14 @@ def exp_mask(val, mask, name=None):
     if name is None:
         name = "exp_mask"
     return tf.add(val, (1 - tf.cast(mask, 'float')) * VERY_NEGATIVE_NUMBER, name=name)
+
+
+# 20180104
+# https://github.com/tensorflow/models/blob/master/tutorials/rnn/quickdraw/train_model.py
+# mask the LSTM output
+mask = tf.tile(
+        tf.expand_dims(tf.sequence_mask(lengths, tf.shape(outputs)[1]), 2),
+        [1, 1, tf.shape(outputs)[2]])
+    zero_outside = tf.where(mask, outputs, tf.zeros_like(outputs))
+    
+    
