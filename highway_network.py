@@ -62,27 +62,6 @@ def linear(args, output_size, bias, bias_start=0.0, scope=None, squeeze=False, w
             add_wd(wd)
 
     return out
-def mask(val, mask, name=None):
-    if name is None:
-        name = 'mask'
-    return tf.multiply(val, tf.cast(mask, 'float'), name=name)
-
-
-def exp_mask(val, mask, name=None):
-    """Give very negative number to unmasked elements in val.
-    For example, [-3, -2, 10], [True, True, False] -> [-3, -2, -1e9].
-    Typically, this effectively masks in exponential space (e.g. softmax)
-    Args:
-        val: values to be masked
-        mask: masking boolean tensor, same shape as tensor
-        name: name for output tensor
-
-    Returns:
-        Same shape as val, where some elements are very small (exponentially zero)
-    """
-    if name is None:
-        name = "exp_mask"
-    return tf.add(val, (1 - tf.cast(mask, 'float')) * VERY_NEGATIVE_NUMBER, name=name)
 
 
 def flatten(tensor, keep):
