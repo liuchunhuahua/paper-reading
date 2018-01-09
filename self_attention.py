@@ -10,6 +10,7 @@ import tensorflow as tf
             hyp = hypothesis_in
             for i in range(config.self_att_enc_layers):
                 with tf.variable_scope(tf.get_variable_scope(), reuse=False):
+                    # pre:[N,L,2d] ,prem_mask:[N,L,1]
                     p = self_attention_layer(config, self.is_train, pre, p_mask=prem_mask, scope="{}_layer_self_att_enc".format(i)) # [N, len, dim]    
                     h = self_attention_layer(config, self.is_train, hyp, p_mask=hyp_mask, scope="{}_layer_self_att_enc_h".format(i))
                     pre = p
