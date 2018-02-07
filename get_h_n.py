@@ -15,9 +15,8 @@
     return h_n
 
   
-  
+ 
 import tensorflow as tf
-
 
 def last_hidden(inp,true_len,max_len ):
   ''' 
@@ -27,6 +26,7 @@ def last_hidden(inp,true_len,max_len ):
   ''' 
   batch_size = inp.get_shape().as_list()[0] 
   len_mask = tf.cast(tf.one_hot(indices=true_len-1,depth=max_len),tf.bool) #(b,l)
+  # be care for that the true_len must be less than max_len, or else tf.boolean_mask will miss some data 
   last_flatten = tf.boolean_mask(tensor= inp, mask=len_mask) 
   last = tf.reshape(last_flatten,[batch_size,-1])
   return last
