@@ -13,3 +13,29 @@
     hn_tensor=tf.convert_to_tensor(hn_list)
     h_n=tf.reshape(hn_tensor,[tf.shape(hn_tensor)[0], tf.shape(hn_tensor)[-1]])         
     return h_n
+
+  
+  
+import tensorflow as tf
+
+
+def last_hidden(inp,true_len,max_len ):
+  ''' 
+  inp: a tensor of [b,l,d]
+  true_len: a tensor of [b]
+  max_len: a scalar of max sequence len
+  ''' 
+  batch_size = inp.get_shape().as_list()[0] 
+  len_mask = tf.cast(tf.one_hot(indices=true_len-1,depth=max_len),tf.bool) #(b,l)
+  last_flatten = tf.boolean_mask(tensor= inp, mask=len_mask) 
+  last = tf.reshape(last_flatten,[batch_size,-1])
+  return last
+
+l = tf.constant([2,3,4])
+inp = tf.constant([[1,2,0,0,0],[2,2,1,0,0],[3,3,3,5,0]])
+
+xmaxlen=5
+res = last_hidden(inp=inp, true_len=l,max_len=xmaxlen)
+
+with tf.Session() as sess:
+  print (sess.run(res))                        
