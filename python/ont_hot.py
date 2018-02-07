@@ -19,3 +19,16 @@ print (n_eye)
 # conver to bool
 n_boolean = np.bool_(n_eye)
 print (n_boolean)
+
+
+'''
+tf version
+
+import tensorflow as tf
+l = tf.constant([1,2,3])
+xmaxlen=5
+n_eye = tf.one_hot(indices=l,depth=xmaxlen)
+
+with tf.Session() as sess:
+  print (sess.run(n_eye))
+'''
